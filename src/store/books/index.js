@@ -1,12 +1,30 @@
 import * as db from '../../api/db';
 
-export default function reducer(state = [], action) {
+export default function reducer(state = {}, action) {
     switch (action.type) {
         case 'GET_BOOKS':
-            return action.payload.books;
+            return {
+                ...state,
+                list: action.payload.books
+                //single: action.payload.books
+            }
+        case 'UNSET_BOOKS':
+            return {
+                ...state,
+                list: []
+            };
 
         case 'GET_BOOK':
-            return action.payload.book;
+            return {
+                ...state,
+                single: action.payload.book
+        }
+
+        case 'LIKE_BOOK':
+            return {
+                ...state,
+                single: action.payload.book
+            }
 
         case 'CREATE_BOOK':
             return state;
@@ -15,6 +33,13 @@ export default function reducer(state = [], action) {
             return state;
     }
 }
+
+
+
+
+
+
+
 
 export function getBooks() {
     return db.getBooks()
@@ -25,11 +50,58 @@ export function getBooks() {
             }
         }));
 }
+export function unsetBooks() {
+    return {
+        type: 'UNSET_BOOKS'
+    };
+}
 
-// export function getBooksByTopic() {
+export function getBook(slug) {
+    return db.getBook(slug)
+        .then(book => ({
+            type: 'GET_BOOK',
+            payload: {
+                book
+            }
+        }));
+}
 
-// }
+export function likeBook(book, user) {
+    // const likedBy = book.likedBy.includes(user.id) 
+    //     ? book.likedBy.filter(uid => uid !== user.id) 
+    //     : book.likedBy.concat(user.id) 
+    const data = {
+        ...book,
+        likedBy: book.likedBy.includes(user.id) 
+            ? book.likedBy.filter(uid => uid !== user.id) 
+            : book.likedBy.concat(user.id) 
 
-// export function getBook() {
+    }
+    return db.updateBook(book.id, data)
+        .then(book => ({
+            type: 'LIKE_BOOK',
+            payload: {
+                book
+            }
+        }));
+}
 
-// }
+export function createBook(data) {
+    return db.createBook(data)
+        .then(book => ({
+            type: 'CREATE_BOOK',
+            payload: {
+                book
+            }
+        }));
+}
+
+export function getBooksByTopic(topic) {
+    return db.getBooksByTopic(topic)
+        .then(books => ({
+            type: 'GET_BOOKS',
+            payload: {
+                books
+            }
+        }));
+}

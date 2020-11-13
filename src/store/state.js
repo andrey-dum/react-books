@@ -1,7 +1,11 @@
 export default {
     user: {
+        id: 777,
         email: 'dum@mail.ru'
     },
-    books: [],
+    books: {
+        list: [],
+        single: null
+    },
     topics: []
 };
