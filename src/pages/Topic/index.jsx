@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import useStore from '../../hooks/store';
+import {useStore} from '../../hooks/store';
 import { getBooksByTopic, unsetBooks } from '../../store/books';
 import BookItem from '../../components/BookItem';
 
 const Topic = ({match}) => {
 
-    const { state , actions } = useStore(state => ({
+    const [ state , actions ] = useStore(state => ({
         topic: state.topics.find(topic => topic.id === match.params.topicId),
         books: state.books.list
     }), {getBooksByTopic, unsetBooks})

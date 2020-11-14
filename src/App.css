@@ -38,6 +38,29 @@
 .bookPage {
   display: flex;
 }
+
+.bookPage img {
+  max-width: 260px;
+}
+
 .bookInfo {
   margin-left: 20px;
+  
+}
+
+.bookHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.bookHeader .likes {
+  
+}
+
+.bookHeader button {
+  margin: 0 5px;
+}
+
+.app .ant-menu > .ant-menu-item-divider {
+  background-color: #666;
 }

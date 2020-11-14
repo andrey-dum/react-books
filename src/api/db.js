@@ -75,6 +75,49 @@ export function getBooksByTopic(topic) {
 // }
 
 
+export function getLists(userId) {
+    return db.collection('lists')
+        .where('userId', '==', userId)
+        .get()
+        .then(snapshot => {
+            const items = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            return items;
+        });
+}
+
+export function createList(data) {
+    return db.collection('lists')
+        .add(data)
+        .then(docRef => docRef.get())
+        .then(mapDoc);
+}
+// export function getList(listId) {
+//     return db.collection('lists').doc(listId)
+//         .get()
+//         .then(mapDoc)
+//         .then(list => {
+//             Promise.all(list.books.map(mapRef)).then(console.log(list))
+            
+//             return list;
+//         });
+// }
+
+export function getList(listId) {
+    return db.collection('lists').doc(listId)
+        .get()
+        .then(mapDoc)
+        .then(list => {
+            return Promise.all(list.books.map(mapRef))
+                .then(books => {
+                    list.books = books;
+                    return list;
+                });
+        });
+}
+
 
 function mapSnapshot(snapshot) {
     return snapshot.docs.map(mapDoc);

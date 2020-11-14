@@ -7,5 +7,9 @@ export default {
         list: [],
         single: null
     },
+    lists: {
+        list: [],
+        single: null
+    },
     topics: []
 };

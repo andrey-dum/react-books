@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import {Switch, Route, Link, NavLink } from 'react-router-dom';
+import {Switch, Route, Link, NavLink, useHistory } from 'react-router-dom';
 
 import './App.css';
 import 'antd/dist/antd.css';
 
-import useStore from './hooks/store';
+import {useStore, useActions, useSelector} from './hooks/store';
 
 import auth, { signIn, signOut } from './api/auth';
 
@@ -16,58 +16,78 @@ import BookItem from './components/BookItem';
 import BookPage from './pages/BookPage';
 import Topic from './pages/Topic';
 
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { Avatar, Button, Layout, Menu, Breadcrumb } from 'antd';
 import {
   DesktopOutlined,
   PieChartOutlined,
   FileOutlined,
   TeamOutlined,
   UserOutlined,
+  LogoutOutlined,
 } from '@ant-design/icons';
-import { Divider } from 'antd';
 import Home from './pages/Home';
+import { getLists } from './store/lists';
+import ListPage from './pages/List';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
+const actionsToBind = {
+  getTopics,
+  getLists,
+  login,
+  logout,
+  getUser
+};
 
 
 function App () {
-  
+
   const [collapsed, setCollapsed] = useState(false)
+
   const onCollapse = collapsed => {
     console.log(collapsed);
     setCollapsed(collapsed);
   };
-  
-  //const { state, actions } = useStore(state => state, { getBooks });
-  const { state, actions } = useStore(state => state, { getBooks, getTopics, login, logout});
+
+  const topics = useSelector(state => state.topics);
+  const user = useSelector(state => state.user);
+  const lists = useSelector(state => state.lists);
+  const actions = useActions(actionsToBind);
+
+  const history = useHistory();
+  //const [ state, actions ] = useStore(state => state, { getBooks, getTopics, login, logout, getLists});
 
   useEffect(() => {
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            actions.login(user);
+    // auth.onAuthStateChanged(user => {
+    //     if (user) {
+    //         actions.login(user);
           
-        } else {
-            actions.logout();
-        }
-    });
-
+    //     } else {
+    //         actions.logout();
+    //     }
+    // });
+    if (user) {
+      actions.getLists(user.id + '')
+    }
     actions.getTopics();
 }, [actions]);
 
-  //const books = state.books.list;
-  const topics = state.topics;
+  //const topics = state.topics;
   
   return (
     <div className="app">
       <Layout style={{ minHeight: '100vh' }} id='components-layout-demo-side'>
         <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-          <div className="logo" />
+          <div className="logo" >
+            {user ? <div onClick={() => signOut()}> {user.email} <Button><LogoutOutlined /></Button></div> : <div onClick={() => signIn()}> <Button>LOG IN</Button></div>}
+          </div>
 
-          {state.user ? <div onClick={() => signOut()}>LOGOUT</div> : <div onClick={() => signIn()}>ВОЙТИ</div>}
+          {/* {state.user ? <div onClick={() => signOut()}>{state.user.email} <Button><LogoutOutlined /></Button></div> : <div onClick={() => signIn()}> <Button>LOG IN</Button></div>} */}
 
           <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
+
+           
 
             <Menu.Item key="1" icon={<PieChartOutlined />}>
               <NavLink  to="/" >Главная</NavLink >
@@ -77,10 +97,11 @@ function App () {
             </Menu.Item>
 
             <Menu.Divider />
-
+            { lists && lists.list.map(list => <Menu.Item key={list.id}><Link to={`/lists/${list.id}`}>{list.title}</Link></Menu.Item>) }
+            <Menu.Divider />
             { topics.map((topic) => (
               <Menu.Item key={topic.id} icon={<PieChartOutlined />}>
-                <NavLink  to={`/${topic.id}`} >{topic.title}</NavLink >
+                <NavLink  to={`/topics/${topic.id}`} >{topic.title}</NavLink >
               </Menu.Item>
               )) }
 
@@ -107,10 +128,11 @@ function App () {
                 <Route path='/new' >
                       <h2>New</h2>
                 </Route>
-                <Route exact path='/:topicId' component={Topic} />
+                <Route exact path='/topics/:topicId' component={Topic} />
                     
          
                 <Route path='/books/:bookId' component={BookPage} />
+                <Route path='/lists/:listId' component={ListPage} />
 
             </Switch>
           

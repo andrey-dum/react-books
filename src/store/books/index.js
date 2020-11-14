@@ -19,6 +19,11 @@ export default function reducer(state = {}, action) {
                 ...state,
                 single: action.payload.book
         }
+        case 'UNSET_BOOK':
+            return {
+                ...state,
+                single: null
+        }
 
         case 'LIKE_BOOK':
             return {
@@ -56,6 +61,7 @@ export function unsetBooks() {
     };
 }
 
+
 export function getBook(slug) {
     return db.getBook(slug)
         .then(book => ({
@@ -66,6 +72,13 @@ export function getBook(slug) {
         }));
 }
 
+export function unsetBook() {
+    return {
+        type: 'UNSET_BOOK'
+    };
+}
+
+
 export function likeBook(book, user) {
     // const likedBy = book.likedBy.includes(user.id) 
     //     ? book.likedBy.filter(uid => uid !== user.id) 
@@ -75,7 +88,7 @@ export function likeBook(book, user) {
         likedBy: book.likedBy.includes(user.id) 
             ? book.likedBy.filter(uid => uid !== user.id) 
             : book.likedBy.concat(user.id) 
-
+//fix user.uid
     }
     return db.updateBook(book.id, data)
         .then(book => ({
@@ -85,6 +98,17 @@ export function likeBook(book, user) {
             }
         }));
 }
+
+export function bookmarkBook(data) {
+    // return db.createBook(data)
+    //     .then(book => ({
+    //         type: 'CREATE_BOOK',
+    //         payload: {
+    //             book
+    //         }
+    //     }));
+}
+
 
 export function createBook(data) {
     return db.createBook(data)
@@ -105,3 +129,20 @@ export function getBooksByTopic(topic) {
             }
         }));
 }
+
+
+
+
+
+export const actions = {
+    getBooks,
+    unsetBooks,
+    //searchBooks,
+    getBooksByTopic,
+    //getBooksByFilter,
+    getBook,
+    unsetBook,
+    likeBook,
+    //markBook,
+    //readBook
+};

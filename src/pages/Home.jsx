@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import useStore from '../hooks/store';
+import {useStore} from '../hooks/store';
 import { getBooks } from '../store/books';
 import BookItem from '../components/BookItem';
 
 import {  Layout, Row, Col, Divider } from 'antd';
 
 const Home = () => {
-    const { state, actions } = useStore(state => state, { getBooks });
+    const [ state, actions ] = useStore(state => state, { getBooks });
 
     useEffect(() => {
       actions.getBooks();
