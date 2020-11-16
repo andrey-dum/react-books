@@ -1,6 +1,6 @@
 export default {
     user: {
-        id: 777,
+        uid: 777,
         email: 'dum@mail.ru'
     },
     books: {
@@ -13,3 +13,4 @@ export default {
     },
     topics: []
 };
+

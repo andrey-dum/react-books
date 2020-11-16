@@ -1,29 +1,24 @@
 import * as auth from '../../api/auth';
 import * as db from '../../api/db';
 
-
-
 export default function reducer(state = null, action) {
     switch (action.type) {
         case 'LOGIN_USER':
             return action.payload.user;
 
         case 'LOGOUT_USER':
-                return null;
-    
-            case 'GET_USER':
-                return {
-                    ...state,
-                    ...action.payload.user
-                };
-    
+            return null;
+
+        case 'GET_USER':
+            return {
+                ...state,
+                ...action.payload.user
+            };
+
         default:
             return state;
     }
 }
-
-
-
 
 export function login(user) {
     return {

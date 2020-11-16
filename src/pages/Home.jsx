@@ -3,7 +3,7 @@ import {useStore} from '../hooks/store';
 import { getBooks } from '../store/books';
 import BookItem from '../components/BookItem';
 
-import {  Layout, Row, Col, Divider } from 'antd';
+import {  Layout, Row, Col } from 'antd';
 
 const Home = () => {
     const [ state, actions ] = useStore(state => state, { getBooks });
@@ -25,10 +25,6 @@ const Home = () => {
                 )) }
                 
             </Row>
-            {/* { books && books.map((book) => (
-                <BookItem key={book.id} book={book} />
-            )) } */}
-
           </Layout>
         </>
     );

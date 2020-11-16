@@ -3,6 +3,21 @@ import { db } from "../firebase";
 // import { firebase } from 'firebase';
 // const db = firestore();
 
+const operatorForField = {
+    authors: 'array-contains',
+    publisher: '==',
+    topics: 'array-contains',
+    subtopics: 'array-contains',
+};
+
+const fieldForFilter = {
+    favorite: 'likedBy',
+    marked: 'markedBy',
+    read: 'readBy'
+};
+
+
+
 export function getUser(userId) {
     return db.collection('users')
         .doc(userId)
@@ -49,12 +64,20 @@ export function createBook(data) {
         .then(mapDoc);
 }
 
+// export function updateBook(bookId, data) {
+//     return db.collection('books')
+//         .doc(bookId)
+//         .update(data)
+//         .then(() => data);
+        
+// }
+
 export function updateBook(bookId, data) {
     return db.collection('books')
         .doc(bookId)
         .update(data)
-        .then(() => data);
-        
+        .then(() => db.collection('books').doc(bookId).get())
+        .then(mapDoc);
 }
 
 export function getBooksByTopic(topic) {
@@ -63,16 +86,12 @@ export function getBooksByTopic(topic) {
         .get()
         .then(mapSnapshot);
 }
-
-// export function getBooks() {
-//     return db.collection('books')
-//         .limit(12)
-//         .get()
-//         .then((mapSnapshot) =>{ 
-//             console.log(mapSnapshot)
-//             debugger
-//         })
-// }
+export function getBooksByFilter(filter, userId) {
+    return db.collection('books')
+        .where(fieldForFilter[filter], 'array-contains', userId)
+        .get()
+        .then(mapSnapshot);
+}
 
 
 export function getLists(userId) {

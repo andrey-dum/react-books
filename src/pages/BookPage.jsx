@@ -1,42 +1,65 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 import { useEffect } from 'react';
 
-import { getBook, likeBook, unsetBook } from '../store/books';
+//import { getBook, likeBook, unsetBook } from '../store/books';
 import {useStore} from '../hooks/store';
 
+import { actions as bookActions } from '../store/books';
 
 import { 
     Button, 
     Tooltip, 
     Badge,
     Skeleton,
-    List
+    List,
 } from 'antd';
-import { HeartOutlined, LikeOutlined } from '@ant-design/icons';
+import Icon from '@ant-design/icons';
+import { 
+    LikeFilled,
+    LikeOutlined,
+    HeartOutlined,
+    HeartFilled,
+    CheckSquareFilled,
+    CheckSquareOutlined
+
+} from '@ant-design/icons';
 
 const BookPage = ({match}) => {
-    const [ {book, user}, actions ] = useStore(state => ({
-        book: state.books.single,
+    // const [ {book, user}, actions ] = useStore(state => ({
+    //     book: state.books.single,
+    //     user: state.user,
+    // }), { getBook, likeBook, unsetBook });
+
+
+    const [{ book, user }, actions] = useStore(state => ({
         user: state.user,
-    }), { getBook, likeBook, unsetBook });
+        book: state.books.single
+    }), bookActions);
+
    
     useEffect(() => {
       actions.getBook(match.params.bookId);
 
       return () => actions.unsetBook();
-    }, [match.params.bookId]);
+    }, [actions, match.params.bookId]);
 
-    //const book = state.book;
-
-    function handleLikeBook() {
-        actions.likeBook(book, user)
-    }
-
-    function handleBookmarkBook() {
+    const handleLikeBook = useCallback(() => {
         if (user) {
-            actions.handleMarkBook(book, user)
+            actions.likeBook(book, user);
         }
-    }
+    }, [actions, user, book]);
+
+    const handleBookmarkButtonClick = useCallback(() => {
+        if (user) {
+            actions.markBook(book, user);
+        }
+    }, [actions, user, book]);
+
+    const handleReadButtonClick = useCallback(() => {
+        if (user) {
+            actions.readBook(book, user);
+        }
+    }, [actions, user, book]);
 
     if (!book) return <Skeleton active />;
 
@@ -76,10 +99,26 @@ const BookPage = ({match}) => {
                                 <Button disabled={!user} onClick={handleLikeBook} type="primary" shape="circle" icon={<LikeOutlined />} />
                             </Badge> */}
                             <span className="likes">{book.likedBy && book.likedBy.length}</span>
-                            <Button disabled={!user} onClick={handleLikeBook} type="primary" shape="circle" icon={<LikeOutlined />} />
+                            <Button 
+                                disabled={!user} 
+                                onClick={handleLikeBook} 
+                                type="primary" 
+                                shape="circle" 
+                                icon={user && book.likedBy.includes(user.uid) ? <LikeFilled /> : <LikeOutlined />} />
                         </Tooltip>
                         <Tooltip title="Add to my List">
-                            <Button disabled={!user} onClick={handleBookmarkBook} type="primary" shape="circle" icon={<HeartOutlined />} />
+                            <Button disabled={!user} 
+                                    onClick={handleBookmarkButtonClick} 
+                                    type="primary" 
+                                    shape="circle" 
+                                    icon={user && book.markedBy.includes(user.uid) ? <HeartFilled /> : <HeartOutlined /> } />
+                                    {/* {user && book.markedBy?.includes(user.uid) ? 'bookmark' : 'bookmark_outline'} */}
+                        </Tooltip>
+                        <Tooltip title="В прочитанные">
+                            
+                                    {/* {user && book.markedBy?.includes(user.uid) ? 'bookmark' : 'bookmark_outline'} */}
+                                    {/* CheckSquareFilled CheckSquareOutlined <TagOutlined />*/}
+                                    <Icon onClick={handleReadButtonClick} component={user && book.readBy.includes(user.uid) ? CheckSquareFilled : CheckSquareOutlined}/>
                         </Tooltip>
                     </div>
                 </div> 

@@ -2,7 +2,7 @@ import firebase from 'firebase'
     // Initialize Cloud Firestore through Firebase
 
     firebase.initializeApp({
-        apiKey: "AIzaSyCNu0FVw7ps2Z32lb_tfEeCRRvlRB0E4rw",
+        apiKey: "",
         authDomain: "react-books-42aa1.firebaseapp.com",
         databaseURL: "https://react-books-42aa1.firebaseio.com",
         projectId: "react-books-42aa1",

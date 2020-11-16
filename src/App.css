@@ -53,6 +53,9 @@
   justify-content: space-between;
   margin-bottom: 20px;
 }
+.bookHeader h1{
+  font-size: 30px;
+}
 .bookHeader .likes {
   
 }

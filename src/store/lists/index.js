@@ -47,8 +47,8 @@ export function getLists(userId) {
         }));
 }
 
-export function getList(userId) {
-    return db.getList(userId)
+export function getList(listId) {
+    return db.getList(listId)
         .then(list => ({
             type: 'GET_LIST',
             payload: {
